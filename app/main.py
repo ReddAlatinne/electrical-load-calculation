@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 
+from app.routes import project_routes
+
 app = FastAPI()
 
-@app.get("/",
-         summary="Welcome message",
-         description="Simple endpoint to verify the API is running.",
-         tags=["meta"]
-         )
-def root():
-    return {"message": "Welcome in Personal Notes"}
+app.include_router(project_routes.router)
