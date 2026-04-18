@@ -35,4 +35,11 @@ def create_project(db: Session, payload: ProjectCreate) -> Project:
     db.add(main_board)
     db.commit()
     db.refresh(project)
-    return project
+    return {
+        "id": project.id,
+        "name": project.name,
+        "created_at": project.created_at,
+        "address": project.address,
+        "status": project.status,
+        "created_board": main_board
+    }
