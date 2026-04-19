@@ -1,0 +1,2 @@
+class ExistingProjectNameError(Exception):
+    pass

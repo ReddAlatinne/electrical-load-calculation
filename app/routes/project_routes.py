@@ -6,7 +6,8 @@ from app.services import project_services
 from app.schemas import (
     ProjectCreate,
     BoardOut,
-    ProjectOut
+    ProjectOut,
+    ErrorResponse
 )
 
 
@@ -16,7 +17,11 @@ router = APIRouter(prefix="/project", tags=["project"])
           response_model=ProjectOut,
           summary="Create new Project",
           description="Create a new project, the server generate an id and create the main board",
-          status_code=201
+          status_code=201,
+          responses={
+              409: {"model": ErrorResponse, "description": "Existing project name"}
+          }
+
           )
 def create_project(payload: ProjectCreate, db: Session = Depends(get_db)):
     return project_services.create_project(db, payload)

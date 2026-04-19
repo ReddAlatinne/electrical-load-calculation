@@ -56,3 +56,6 @@ class ProjectOut(BaseModel):
         },
         "from_attributes": True
     }
+
+class ErrorResponse(BaseModel):
+    detail: str
