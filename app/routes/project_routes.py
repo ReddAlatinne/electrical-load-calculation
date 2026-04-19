@@ -15,7 +15,7 @@ router = APIRouter(prefix="/project", tags=["project"])
 @router.post("/",
           response_model=ProjectOut,
           summary="Create new Project",
-          description="Create a new Project, the server generate an id and the Main Board",
+          description="Create a new project, the server generate an id and create the main board",
           status_code=201
           )
 def create_project(payload: ProjectCreate, db: Session = Depends(get_db)):

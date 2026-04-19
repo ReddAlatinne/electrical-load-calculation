@@ -28,7 +28,15 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+# This function is here to ignore specific constraints (manually added)
+def include_object(object, name, type_, reflected, compare_to):
+    # Ignore unique index partiel
+    if type_ == "index" and name == "unique_root_per_project":
+        return False
 
+    return True
+
+# From here automatically generated
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 

@@ -1,8 +1,20 @@
+from sqlalchemy import (
+    Column,
+    String,
+    UUID,
+    DateTime,
+    func,
+    ForeignKey,
+    Float,
+    Integer,
+    UniqueConstraint,
+    CheckConstraint
+)
 import uuid
-from sqlalchemy import Column, String, UUID, DateTime, func, ForeignKey, Float, Integer
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+
 
 class User(Base):
     __tablename__ = "user"
@@ -23,6 +35,9 @@ class Project(Base):
     address = Column(String(250), nullable=True)
     status = Column(String(20), nullable=False, default="active")
     boards = relationship("Board", back_populates="project", cascade="all, delete-orphan")
+    __table_args__ = (
+        UniqueConstraint('owner_id', 'name', name='uq_project_name'),
+    )
 
 class Board(Base):
     __tablename__ = "board"
@@ -36,6 +51,12 @@ class Board(Base):
     parent = relationship("Board", back_populates="children", remote_side=[id])
     children = relationship("Board", back_populates="parent")
     consumers = relationship("Consumer", back_populates="board", cascade="all, delete-orphan")
+    __table_args__ = (
+        CheckConstraint(
+            "simultaneity_factor >= 0 AND simultaneity_factor <= 1",
+            name="check_simultaneity_factor_board"
+        ),
+    )
 
 class Consumer(Base):
     __tablename__ = "consumer"
@@ -47,3 +68,9 @@ class Consumer(Base):
     unit_power_kw = Column(Float, default=0, nullable=False)
     simultaneity_factor = Column(Float, default=1.0, nullable=False)
     board = relationship("Board", back_populates="consumers")
+    __table_args__ = (
+        CheckConstraint(
+            "simultaneity_factor >= 0 AND simultaneity_factor <= 1",
+            name="check_simultaneity_factor_consumer"
+        ),
+    )
