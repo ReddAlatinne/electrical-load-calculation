@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+alembic/versions/__pycache__
+
+# Virtual env
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Git
+.git
+.gitignore
+
+# MacOS
+.DS_Store
+
+# Logs
+*.log
