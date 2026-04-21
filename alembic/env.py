@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+from dotenv import load_dotenv
 import os
 
 from sqlalchemy import engine_from_config
@@ -11,6 +12,14 @@ from app.models import User, Project, Board, Consumer
 
 # this is the Alembic Config object
 config = context.config
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set")
+
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # 🔧 NEW: load DATABASE_URL from environment (Docker ready)
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -27,7 +36,7 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
-# 🔧 Keep your custom filter (good)
+# Custom filters
 def include_object(object, name, type_, reflected, compare_to):
     # Ignore partial unique index (manually added)
     if type_ == "index" and name == "unique_root_per_project":

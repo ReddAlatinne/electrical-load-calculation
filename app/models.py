@@ -56,6 +56,7 @@ class Board(Base):
             "simultaneity_factor >= 0 AND simultaneity_factor <= 1",
             name="check_simultaneity_factor_board"
         ),
+        UniqueConstraint('project_id', 'name', name='uq_board_name'),
     )
 
 class Consumer(Base):
