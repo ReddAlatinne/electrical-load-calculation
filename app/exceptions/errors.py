@@ -16,3 +16,6 @@ class NotBoardProjectError(Exception):
 class ExistingBoardNameError(Exception):
     pass
 
+class InvalidCredentials(Exception):
+    pass
+

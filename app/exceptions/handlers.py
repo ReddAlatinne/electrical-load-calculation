@@ -6,7 +6,8 @@ from app.exceptions.errors import(
     BoardNotFoundError,
     NotProjectOwnerError,
     NotBoardProjectError,
-    ExistingBoardNameError
+    ExistingBoardNameError,
+    InvalidCredentials
 )
 
 
@@ -52,4 +53,11 @@ def add_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=409,
             content={"detail": "Board name already exists for this project"},
+        )
+
+    @app.exception_handler(InvalidCredentials)
+    async def invalid_credentials_handler(request: Request, exc: InvalidCredentials):
+        return JSONResponse(
+            status_code=401,
+            content={"detail": "Invalid credentials"},
         )
