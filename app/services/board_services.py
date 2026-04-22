@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -14,7 +15,7 @@ from app.schemas import (
 )
 
 
-def create_board(db: Session, payload: BoardCreate) -> Project:
+def create_board(project_id: UUID, db: Session, payload: BoardCreate) -> Board:
     # Until User login is set then remove block
     DEFAULT_EMAIL = "admin@admin.com"
     DEFAULT_ID = "00000000-0000-0000-0000-000000000001"
@@ -28,7 +29,7 @@ def create_board(db: Session, payload: BoardCreate) -> Project:
         db.flush()
     # Upper Block to remove once user login is set
 
-    project = (db.query(Project).filter(Project.id == payload.project_id).first())
+    project = (db.query(Project).filter(Project.id == project_id).first())
     parent_board = (db.query(Board).filter(Board.id == payload.parent_id).first())
     '''existing_board = (db.query(Board).filter(Board.project_id == payload.project_id,
                        Board.name == payload.name).first())'''
@@ -49,7 +50,7 @@ def create_board(db: Session, payload: BoardCreate) -> Project:
         raise ExistingBoardNameError()'''
 
     new_board = Board(
-        project_id=payload.project_id,
+        project_id=project_id,
         name=payload.name,
         parent_id=payload.parent_id,
     )

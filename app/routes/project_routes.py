@@ -11,7 +11,7 @@ from app.schemas import (
 )
 
 
-router = APIRouter(prefix="/project", tags=["project"])
+router = APIRouter(prefix="/projects", tags=["project"])
 
 @router.post("/",
           response_model=ProjectOut,

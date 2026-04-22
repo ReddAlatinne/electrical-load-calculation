@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Query, Depends
+from sqlalchemy import Uuid
 from sqlalchemy.orm import Session
+from uuid import UUID
 
 from app.database import get_db
 from app.services import board_services
@@ -10,12 +12,12 @@ from app.schemas import (
 )
 
 
-router = APIRouter(prefix="/board", tags=["board"])
+router = APIRouter(tags=["board"])
 
-@router.post("/",
+@router.post("/projects/{project_id}/boards",
           response_model=BoardOut,
           summary="Create new board",
-          description="Create a new board",
+          description="Create a new board under the specified parent board within a project",
           status_code=201,
           responses={
               404: {"model": ErrorResponse, "description": "Project or parent board not found"},
@@ -23,5 +25,5 @@ router = APIRouter(prefix="/board", tags=["board"])
               409: {"model": ErrorResponse, "description": "Board name already exists"},
           }
           )
-def create_board(payload: BoardCreate, db: Session = Depends(get_db)):
-    return board_services.create_board(db, payload)
+def create_board(project_id: UUID, payload: BoardCreate, db: Session = Depends(get_db)):
+    return board_services.create_board(project_id, db, payload)

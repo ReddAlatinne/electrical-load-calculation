@@ -16,13 +16,11 @@ class ProjectCreate(BaseModel):
 
 class BoardCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    project_id: UUID
     parent_id: UUID = Field(description="Parent board id")
     model_config = {
         "json_schema_extra": {
             "example": {
                 "name": "New board",
-                "project_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
                 "parent_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
             }
         }
