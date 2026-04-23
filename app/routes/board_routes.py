@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from uuid import UUID
 
 from app.database import get_db
+from app.security import get_current_user
 from app.services import board_services
 from app.schemas import (
     BoardCreate,
@@ -25,5 +26,5 @@ router = APIRouter(tags=["board"])
               409: {"model": ErrorResponse, "description": "Board name already exists"},
           }
           )
-def create_board(project_id: UUID, payload: BoardCreate, db: Session = Depends(get_db)):
-    return board_services.create_board(project_id, db, payload)
+def create_board(project_id: UUID, payload: BoardCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return board_services.create_board(project_id, db, payload, current_user)

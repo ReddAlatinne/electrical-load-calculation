@@ -4,13 +4,13 @@ from sqlalchemy.exc import IntegrityError
 from app.models import Project, User, Board
 from app.exceptions.errors import ExistingProjectNameError
 from app.schemas import (
-    ProjectCreate
+    ProjectCreate,
 )
 
 
-def create_project(db: Session, payload: ProjectCreate) -> Project:
+def create_project(db: Session, payload: ProjectCreate, user: User) -> Project:
     # Until User login is set then remove block
-    DEFAULT_EMAIL = "admin@admin.com"
+    """DEFAULT_EMAIL = "admin@admin.com"
     DEFAULT_ID = "00000000-0000-0000-0000-000000000001"
     user = db.query(User).filter(User.id == DEFAULT_ID).first()
     if not user:
@@ -19,7 +19,7 @@ def create_project(db: Session, payload: ProjectCreate) -> Project:
             email=DEFAULT_EMAIL
         )
         db.add(user)
-        db.flush()
+        db.flush()"""
     # Upper Block to remove once user login is set
 
     project = (db.query(Project).filter(Project.owner_id == user.id,

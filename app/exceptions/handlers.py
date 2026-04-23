@@ -7,7 +7,8 @@ from app.exceptions.errors import(
     NotProjectOwnerError,
     NotBoardProjectError,
     ExistingBoardNameError,
-    InvalidCredentials
+    InvalidCredentials,
+    ExistingEmailError,
 )
 
 
@@ -60,4 +61,11 @@ def add_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=401,
             content={"detail": "Invalid credentials"},
+        )
+
+    @app.exception_handler(ExistingEmailError)
+    async def existing_email_handler(request: Request, exc: ExistingEmailError):
+        return JSONResponse(
+            status_code=409,
+            content={"detail": "Email already exists"},
         )

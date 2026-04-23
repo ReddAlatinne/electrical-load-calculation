@@ -19,3 +19,5 @@ class ExistingBoardNameError(Exception):
 class InvalidCredentials(Exception):
     pass
 
+class ExistingEmailError(Exception):
+    pass

@@ -1,3 +1,4 @@
+from uuid import UUID
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, UTC
 from jose import jwt, JWTError
@@ -58,14 +59,14 @@ def get_current_user(
             raise InvalidCredentials()
 
         try:
-            user_id = int(user_id)
+            user_id = UUID(user_id)
         except ValueError:
             raise InvalidCredentials()
 
     except JWTError:
         raise InvalidCredentials()
 
-    user = db.query(models.User).filter(models.User.id == int(user_id)).first()
+    user = db.query(models.User).filter(models.User.id == user_id).first()
 
     if user is None:
         raise InvalidCredentials()

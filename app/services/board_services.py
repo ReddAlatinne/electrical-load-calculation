@@ -15,9 +15,9 @@ from app.schemas import (
 )
 
 
-def create_board(project_id: UUID, db: Session, payload: BoardCreate) -> Board:
+def create_board(project_id: UUID, db: Session, payload: BoardCreate, user: User) -> Board:
     # Until User login is set then remove block
-    DEFAULT_EMAIL = "admin@admin.com"
+    """DEFAULT_EMAIL = "admin@admin.com"
     DEFAULT_ID = "00000000-0000-0000-0000-000000000001"
     user = db.query(User).filter(User.id == DEFAULT_ID).first()
     if not user:
@@ -26,7 +26,7 @@ def create_board(project_id: UUID, db: Session, payload: BoardCreate) -> Board:
             email=DEFAULT_EMAIL
         )
         db.add(user)
-        db.flush()
+        db.flush()"""
     # Upper Block to remove once user login is set
 
     project = (db.query(Project).filter(Project.id == project_id).first())

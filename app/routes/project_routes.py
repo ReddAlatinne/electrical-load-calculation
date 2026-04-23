@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.services import project_services
+from app.security import get_current_user
 from app.schemas import (
     ProjectCreate,
     BoardOut,
@@ -23,5 +24,6 @@ router = APIRouter(prefix="/projects", tags=["project"])
           }
 
           )
-def create_project(payload: ProjectCreate, db: Session = Depends(get_db)):
-    return project_services.create_project(db, payload)
+def create_project(payload: ProjectCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return project_services.create_project(db, payload, current_user)
+
