@@ -36,9 +36,21 @@ def create_access_token(data: dict):
         settings.secret_key,
         algorithm=settings.algorithm,
     )
-
     return encoded_jwt
 
+def create_refresh_token(data: dict):
+    to_encode = data.copy()
+
+    expire = datetime.now(UTC) + timedelta(days=7)  # adjust later if needed
+
+    to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(
+        to_encode,
+        settings.secret_key,
+        algorithm=settings.algorithm,
+    )
+    return encoded_jwt
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
@@ -52,6 +64,10 @@ def get_current_user(
             settings.secret_key,
             algorithms=[settings.algorithm],
         )
+
+        token_type = payload.get("type")
+        if token_type != "access":
+            raise InvalidCredentials()
 
         user_id: str = payload.get("sub")
 

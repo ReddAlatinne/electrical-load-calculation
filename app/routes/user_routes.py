@@ -24,9 +24,15 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
              }
 )
 def login(payload: UserLogin, db: Session = Depends(get_db)):
-    token = user_services.login_user(db, payload.email, payload.password)
+    return user_services.login_user(db, payload.email, payload.password)
 
-    return {
-        "access_token": token,
-        "token_type": "bearer"
-    }
+
+@router.post(
+    "/refresh",
+    response_model=TokenResponse,
+    status_code=200,
+    summary="Refresh access token",
+    description="Generate a new access token using a refresh token",
+)
+def refresh_token(payload: dict, db: Session = Depends(get_db)):
+    return user_services.refresh_access_token(db, payload["refresh_token"])

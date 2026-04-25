@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from jose import jwt, JWTError
+from uuid import UUID
 
+from app.config import settings
 from app.models import User
 from app.schemas import UserCreate
-from app.security import hash_password, verify_password, create_access_token
+from app.security import hash_password, verify_password, create_access_token, create_refresh_token
 from app.exceptions.errors import InvalidCredentials, ExistingEmailError
 
 
@@ -44,6 +47,55 @@ def authenticate_user(db: Session, email: str, password: str):
 def login_user(db: Session, email: str, password: str):
     user = authenticate_user(db, email, password)
 
-    token = create_access_token({"sub": str(user.id)})
+    access_token = create_access_token({
+        "sub": str(user.id),
+        "type": "access"
+    })
 
-    return token
+    refresh_token = create_refresh_token({
+        "sub": str(user.id),
+        "type": "refresh"
+    })
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer"
+    }
+
+def refresh_access_token(db: Session, refresh_token: str):
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            settings.secret_key,
+            algorithms=[settings.algorithm],
+        )
+
+        token_type = payload.get("type")
+        if token_type != "refresh":
+            raise InvalidCredentials()
+
+        user_id = payload.get("sub")
+        if user_id is None:
+            raise InvalidCredentials()
+
+        user_id = UUID(user_id)
+
+    except JWTError:
+        raise InvalidCredentials()
+
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if user is None:
+        raise InvalidCredentials()
+
+    new_access_token = create_access_token({
+        "sub": str(user.id),
+        "type": "access"
+    })
+
+    return {
+        "access_token": new_access_token,
+        "refresh_token": refresh_token,  # optional: keep same one
+        "token_type": "bearer"
+    }

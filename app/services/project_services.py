@@ -9,18 +9,6 @@ from app.schemas import (
 
 
 def create_project(db: Session, payload: ProjectCreate, user: User) -> Project:
-    # Until User login is set then remove block
-    """DEFAULT_EMAIL = "admin@admin.com"
-    DEFAULT_ID = "00000000-0000-0000-0000-000000000001"
-    user = db.query(User).filter(User.id == DEFAULT_ID).first()
-    if not user:
-        user = User(
-            id=DEFAULT_ID,
-            email=DEFAULT_EMAIL
-        )
-        db.add(user)
-        db.flush()"""
-    # Upper Block to remove once user login is set
 
     project = (db.query(Project).filter(Project.owner_id == user.id,
                        Project.name == payload.name).first())
