@@ -30,7 +30,6 @@ def create_user(db: Session, payload: UserCreate):
             raise ExistingEmailError()
         # else error 500
         raise
-    db.commit()
     db.refresh(new_user)
     return new_user
 

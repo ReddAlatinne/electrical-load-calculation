@@ -8,20 +8,13 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.database import Base
-from app.models import User, Project, Board, Consumer
+import app.models
 
 # this is the Alembic Config object
 config = context.config
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set")
-
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
-
-# 🔧 NEW: load DATABASE_URL from environment (Docker ready)
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set")
@@ -71,7 +64,9 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            include_object=include_object,  # 🔧 ADD THIS
+            include_object=include_object,
+            compare_type=True,
+            compare_server_default=True,
         )
 
         with context.begin_transaction():
