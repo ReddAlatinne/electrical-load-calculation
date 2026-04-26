@@ -1,6 +1,7 @@
 from sqlalchemy import (
     Column,
     String,
+    Boolean,
     UUID,
     DateTime,
     func,
@@ -54,6 +55,7 @@ class Board(Base):
     name = Column(String(100), nullable=False, index=True)
     parent_id = Column(UUID(as_uuid=True), ForeignKey("boards.id", ondelete="SET NULL"), nullable=True, index=True)
     simultaneity_factor = Column(Float, default=1.0, nullable=False)
+    is_root = Column(Boolean, nullable=False, default=False)
     project = relationship("Project", back_populates="boards")
     parent = relationship("Board", back_populates="children", remote_side=[id])
     children = relationship("Board", back_populates="parent")
@@ -64,6 +66,10 @@ class Board(Base):
             name="check_simultaneity_factor_board"
         ),
         UniqueConstraint('project_id', 'name', name='uq_board_name'),
+        CheckConstraint(
+            "(is_root = TRUE AND parent_id IS NULL) OR (is_root = FALSE)",
+            name="check_root_board_consistency"
+        ),
     )
 
     def __repr__(self):

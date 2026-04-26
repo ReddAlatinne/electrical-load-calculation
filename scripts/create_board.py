@@ -23,14 +23,14 @@ headers = {
     "Authorization": f"Bearer {token}"
 }
 
-project_id = "6190d411-2861-450f-9a01-7a1dfe9a6b22"
+project_id = "46d8e168-8e1b-4b11-abfa-8e597a49fdd4"
 
 boards_response = requests.post(
     f"{BASE_URL}/projects/{project_id}/boards",
     headers=headers,
     json={
         "name": "New board",
-        "parent_id": "29a55acc-cd85-4914-9ef6-89f0c3936daf"
+        "parent_id": "aa35f6c3-38bf-47c1-8c83-5e4177b4c713"
     }
 )
 

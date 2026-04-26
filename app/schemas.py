@@ -31,13 +31,15 @@ class BoardOut(BaseModel):
     name: str
     parent_id: UUID | None = Field(description="Parent board id")
     simultaneity_factor: float
+    is_root: bool
     model_config = {
         "json_schema_extra": {
             "example": {
                 "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
                 "name": "Main Board",
                 "parent_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-                "simultaneity_factor": 1.0
+                "simultaneity_factor": 1.0,
+                "is_root": False
             }
         },
         "from_attributes": True
@@ -62,7 +64,8 @@ class ProjectOut(BaseModel):
                     "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
                     "name": "Main Board",
                     "parent_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-                    "simultaneity_factor": 1.0
+                    "simultaneity_factor": 1.0,
+                    "is_root": True
                 }
             }
         },

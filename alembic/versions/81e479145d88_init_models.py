@@ -1,8 +1,8 @@
-"""init model
+"""init models
 
-Revision ID: 716e9cc56297
+Revision ID: 81e479145d88
 Revises: 
-Create Date: 2026-04-25 21:13:14.878483
+Create Date: 2026-04-26 20:39:11.212458
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '716e9cc56297'
+revision: str = '81e479145d88'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -48,6 +48,8 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('parent_id', sa.UUID(), nullable=True),
     sa.Column('simultaneity_factor', sa.Float(), nullable=False),
+    sa.Column('is_root', sa.Boolean(), nullable=False),
+    sa.CheckConstraint('(is_root = TRUE AND parent_id IS NULL) OR (is_root = FALSE)', name='check_root_board_consistency'),
     sa.CheckConstraint('simultaneity_factor >= 0 AND simultaneity_factor <= 1', name='check_simultaneity_factor_board'),
     sa.ForeignKeyConstraint(['parent_id'], ['boards.id'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['project_id'], ['projects.id'], ondelete='CASCADE'),
@@ -72,9 +74,15 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_consumers_board_id'), 'consumers', ['board_id'], unique=False)
     # ### end Alembic commands ###
-    # Manual constraints
-    op.create_index( "unique_root_per_project", "boards",
-                     ["project_id"], unique=True, postgresql_where=sa.text("parent_id IS NULL") )
+
+    #Manually added
+    op.create_index(
+        "unique_root_per_project",
+        "boards",
+        ["project_id"],
+        unique=True,
+        postgresql_where=sa.text("is_root = true")
+    )
 
 
 def downgrade() -> None:
@@ -92,5 +100,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
     # ### end Alembic commands ###
-    # Manually added
+
+    #Manually added
     op.drop_index("unique_root_per_project", table_name="boards")
